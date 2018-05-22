@@ -11,7 +11,7 @@ class HashMap {
   get(key) {
     const index = this._findSlot(key);
     if (this._slots[index] === undefined) {
-      throw new Error('Key error');
+      return false;
     }
     return this._slots[index].value;
   }
@@ -23,12 +23,18 @@ class HashMap {
     }
 
     const index = this._findSlot(key);
-    this._slots[index] = {
-      key,
-      value,
-      deleted: false 
-    };
-    this.length++;
+    if(!this._slots[index] ){
+      this._slots[index] = {
+        key,
+        value
+      };
+      this.length++;
+    } else{
+      this._slots[index]={
+        key,
+        value
+      };
+    }
   }
 
   remove(key) {
@@ -97,9 +103,60 @@ function main() {
   lor.set('LadyOfLight', 'Galadriel');
   lor.set('HalfElven', 'Arwen');
   lor.set('Ent', 'Treebeard');
-  console.log(lor);
+  //console.log(lor);
   //console.log((lor.get('Maiar')));
   return lor;
 }
 
 main();
+
+
+
+function permPalindrome(str) {
+  const pal = new HashMap();
+  let oddnum = 0;
+  str = str.toLowerCase().replace(/[^a-zA-Z0-9]/g, '');
+  for (let i = 0; i < str.length; i++) {
+    try {
+      let value = pal.get(str[i]);
+      pal.set(str[i], value + 1);
+    } catch (error) {
+      pal.set(str[i], 1);
+    }
+  }
+
+  for (let i = 0; i < str.length; i++) {
+    let value = pal.get(str[i]);
+    if (value % 2 !== 0) oddnum++;
+    if (oddnum > 1) return false;
+    //console.log(pal);
+  }
+  //console.log(pal);
+  return true;
+}
+
+//console.log(permPalindrome('panama'));
+//console.log(permPalindrome('racecar'));
+
+
+function groupingAnagram(array) {
+  console.log(array);
+  const ang = new HashMap();
+  let keys = [];
+
+  let sorted = array.map(item => item.split('').sort().join(''));
+  sorted.forEach((angKey, index) => {
+    const item = array[index];
+    const angArray = ang.get(angKey);
+    if (!angArray) {
+      ang.set(angKey, [item]);
+      keys.push(angKey);
+    } else {
+      ang.set(angKey, angArray.concat([item]));
+    }
+  });
+  return keys.map(key => ang.get(key));
+}
+
+
+console.log(groupingAnagram(['east', 'cars', 'acre', 'arcs', 'teas', 'eats', 'race']));
